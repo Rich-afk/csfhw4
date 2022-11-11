@@ -116,10 +116,7 @@ void merge_sort(int64_t *arr, size_t begin, size_t end, size_t threshold) {
     //memcpy(arr, temp, end);
     free(arrTemp);
     
-  }
-
-    
-  }
+  }    
 }
 
 int main(int argc, char **argv) {

@@ -167,7 +167,12 @@ int main(int argc, char **argv) {
 
   // TODO: unmap and close the file
   *data = munmap(NULL, file_size_in_bytes);
-  // close(fd);
+    
+  if (close(fd)!= 0) {
+    fprintf(stderr, "close issue");
+    exit(1);
+  }
+
 
   // TODO: exit with a 0 exit code if sort was successful
   exit(0);

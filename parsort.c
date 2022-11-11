@@ -58,7 +58,7 @@ int compare_value(const void * a, const void * b) {
 
 void merge_sort(int64_t *arr, size_t begin, size_t end, size_t threshold) {
 
-  int64_t temp[end];
+  //int64_t temp[end];
 
   // number of elements is at or below the threshold
   if (end - begin <= threshold) {
@@ -113,7 +113,7 @@ void merge_sort(int64_t *arr, size_t begin, size_t end, size_t threshold) {
     merge(arr, begin, mid, end, arrTemp);
 
     // copy the contents of the temp array back to the original array
-    memcpy(arr, temp, end);
+    //memcpy(arr, temp, end);
     free(arrTemp);
     
   }

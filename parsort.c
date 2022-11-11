@@ -13,16 +13,21 @@
 
 void merge(int64_t *arr, size_t begin, size_t mid, size_t end, int64_t *temparr) {
 
-  int sizeLeftArray = mid - begin + 1;
+
+  // keep left index and right index
+  // start left index 0 right index mid
+  // terminate when left hits mid or right hits end
+
+  int sizeLeftArray = mid - begin;
   int sizeRightArray = end - mid;
 
   int64_t leftArray[sizeLeftArray];
-  int64_t rightArray[end - mid];
+  int64_t rightArray[sizeRightArray];
 
   for (int i = 0; i < sizeLeftArray; i++) {
     leftArray[i] = arr[sizeLeftArray];
   }
-  for (int j = 0; j < sizeRightArray; j++) {
+  for (int j = mid; j < end; j++) {
     rightArray[j] = arr[sizeRightArray];
   }
 
@@ -43,16 +48,23 @@ void merge(int64_t *arr, size_t begin, size_t mid, size_t end, int64_t *temparr)
 
 }
 
+int compare_value(const void * a, const void * b) {
+    int f = *((int*)a);
+    int s = *((int*)b);
+    if (f < s) return  1;
+    if (f > s) return -1;
+    return 0;
+}
+
 void merge_sort(int64_t *arr, size_t begin, size_t end, size_t threshold) {
-  // TODO: implement
 
   int64_t temp[end];
 
   // number of elements is at or below the threshold
-  if (end <= threshold) {
+  if (end - begin <= threshold) {
     // sort the elements sequentially
     // void qsort(void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *));
-
+    qsort(arr + begin, end - begin, sizeof(int64_t), compare_value);
   }
   else {
     size_t mid = begin + (end - begin) / 2;
@@ -67,9 +79,10 @@ void merge_sort(int64_t *arr, size_t begin, size_t end, size_t threshold) {
     // }
 
     // merge the sorted sequences into a temp array
-    merge(arr, 0, mid, end, temp);
+    merge(arr, begin, mid, end, temp);
 
     // copy the contents of the temp array back to the original array
+    memcpy(arr, temp, end);
     
   }
 }
@@ -114,7 +127,7 @@ int main(int argc, char **argv) {
   };
 
   // TODO: sort the data!
-  int len = sizeof(*data)/sizeof(data[0]);
+  int len = file_size_in_bytes/sizeof(data[0]);
   merge_sort(data, 0, len, threshold);
 
   // TODO: unmap and close the file

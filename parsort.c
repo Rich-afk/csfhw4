@@ -68,21 +68,56 @@ void merge_sort(int64_t *arr, size_t begin, size_t end, size_t threshold) {
   }
   else {
     size_t mid = begin + (end - begin) / 2;
-    // in parallel {
+    int64_t *arrTemp = malloc((end - begin) * sizeof(int64_t));
+    pid_t pidL = fork();
+    pid_t pidR = -1;
+    if (pidL == -1) {
+	    fprintf(stderr, "fork error");
+ 	    free(arrTemp);
+	    exit(1);
+    }
+    if (pidL > 0 || pidL < 0) {
+	    //fork right half
+	    pidR = fork();
+	    if (pidR == -1) {
+	      fprintf(stderr, "fork error");
+ 	      free(arrTemp);
+	      exit(1);
+	    }
+	    else if (pidR == 0) {
+	      merge_sort(arr, begin, mid, threshold);
+	      exit(0);
+      }
+      else if (pidL == 0) {
+        merge_sort(arr, begin, mid, threshold);
+        exit(0);
+      }
+   }
+   int wrstatus, wlstatus;
+   pid_t r_actual_pid = waitpid(pidR, &wrstatus, 0);
+   pid_t l_actual_pid = waitpid(pidL, &wlstatus, 0);
 
-      // recursively sort the left half of the sequence
-      merge_sort(arr, begin, mid, threshold);
+   if (r_actual_pid == -1 || l_actual_pid == -1) {
+      fprintf(stderr, "waitpid failure");
+      exit(1);
+    }
 
-      // recursively sort the right half of the sequence
-      merge_sort(arr, mid + 1, end, threshold);
-
-    // }
+   if (WEXITSTATUS(wrstatus) != 0 || WEXITSTATUS(wlstatus) != 0) {
+      fprintf(stderr, "subprocess returned nonzero exit code");
+      free(arrTemp);
+      exit(1);
+    }
+   
 
     // merge the sorted sequences into a temp array
-    merge(arr, begin, mid, end, temp);
+    merge(arr, begin, mid, end, arrTemp);
 
     // copy the contents of the temp array back to the original array
     memcpy(arr, temp, end);
+    free(arrTemp);
+    
+  }
+
     
   }
 }

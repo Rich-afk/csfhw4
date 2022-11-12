@@ -85,7 +85,7 @@ void merge_sort(int64_t *arr, size_t begin, size_t end, size_t threshold) {
 	      exit(1);
 	    }
 	    else if (pidR == 0) {
-	      merge_sort(arr, begin, mid, threshold);
+	      merge_sort(arr, mid, end, threshold);
 	      exit(0);
       }
       else if (pidL == 0) {

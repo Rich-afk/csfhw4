@@ -17,45 +17,42 @@ void merge(int64_t *arr, size_t begin, size_t mid, size_t end, int64_t *temparr)
   // start left index 0 right index mid
   // terminate when left hits mid or right hits end
 
-  int sizeLeftArray = mid - begin;
-  int sizeRightArray = end - mid;
-
-  int64_t leftArray[sizeLeftArray];
-  int64_t rightArray[sizeRightArray];
-
-  for (int i = 0; i < sizeLeftArray; i++) {
-    leftArray[i] = arr[sizeLeftArray];
-  }
-  for (int j = mid; j < end; j++) {
-    rightArray[j] = arr[sizeRightArray];
-  }
-
-  int i = 0;
-  int j = 0;
+  int i = begin;
+  int j = mid;
   int x = begin;
-  while(i < sizeLeftArray && j < sizeRightArray) {
-    if(leftArray[i] <= rightArray[j]) {
-      temparr[x] = leftArray[i];
+  while(i < mid && j < end) {
+    if(arr[i] <= arr[j]) {
+      temparr[x] = arr[i];
       i++;
     }
     else {
-      temparr[x] = rightArray[j];
+      temparr[x] = arr[j];
       j++;
     }
     x++;
   }
 
-  int a = 0;
+  while(i < mid) {
+    temparr[x] = arr[i];
+    i++;
+    x++;
+  }
+
+  while(j < end) {
+    temparr[x] = arr[j];
+    j++;
+    x++;
+  }
+
   for(int i = begin; i < end; i++) {
-    arr[i] = temparr[a];
-    a++;
+    arr[i] = temparr[i];
   }
 }
 
 int compare_value(const void * a, const void * b) {
     int f = *((int*)a);
     int s = *((int*)b);
-    if (f < s) return  1;
+    if (f < s) return 1;
     if (f > s) return -1;
     return 0;
 }

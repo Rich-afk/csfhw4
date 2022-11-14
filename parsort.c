@@ -13,7 +13,6 @@
 
 void merge(int64_t *arr, size_t begin, size_t mid, size_t end, int64_t *temparr) {
 
-
   // keep left index and right index
   // start left index 0 right index mid
   // terminate when left hits mid or right hits end
@@ -46,6 +45,11 @@ void merge(int64_t *arr, size_t begin, size_t mid, size_t end, int64_t *temparr)
     x++;
   }
 
+  int a = 0;
+  for(int i = begin; i < end; i++) {
+    arr[i] = temparr[a];
+    a++;
+  }
 }
 
 int compare_value(const void * a, const void * b) {
@@ -70,29 +74,25 @@ void merge_sort(int64_t *arr, size_t begin, size_t end, size_t threshold) {
     size_t mid = begin + (end - begin) / 2;
     int64_t *arrTemp = malloc((end - begin) * sizeof(int64_t));
     pid_t pidL = fork();
-    pid_t pidR = -1;
+    pid_t pidR = fork();
     if (pidL == -1) {
 	    fprintf(stderr, "fork error");
  	    free(arrTemp);
 	    exit(1);
     }
-    if (pidL > 0 || pidL < 0) {
-	    //fork right half
-	    pidR = fork();
-	    if (pidR == -1) {
-	      fprintf(stderr, "fork error");
- 	      free(arrTemp);
-	      exit(1);
-	    }
-	    else if (pidR == 0) {
-	      merge_sort(arr, mid, end, threshold);
-	      exit(0);
-      }
-      else if (pidL == 0) {
-        merge_sort(arr, begin, mid, threshold);
-        exit(0);
-      }
-   }
+    if (pidR == -1) {
+	    fprintf(stderr, "fork error");
+ 	    free(arrTemp);
+	    exit(1);
+    }
+    if (pidR == 0) {
+      merge_sort(arr, mid, end, threshold);
+      exit(0);
+    }
+    if (pidL == 0) {
+      merge_sort(arr, begin, mid, threshold);
+      exit(0);
+    }
    int wrstatus, wlstatus;
    pid_t r_actual_pid = waitpid(pidR, &wrstatus, 0);
    pid_t l_actual_pid = waitpid(pidL, &wlstatus, 0);

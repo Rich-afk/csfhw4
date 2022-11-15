@@ -59,7 +59,9 @@ int compare_value(const void * a, const void * b) {
 
 void merge_sort(int64_t *arr, size_t begin, size_t end, size_t threshold) {
 
-  //int64_t temp[end];
+  if (end <= begin) {
+    fprintf(stderr, "invalid begining and end values");
+  }
 
   // number of elements is at or below the threshold
   if (end - begin <= threshold) {
@@ -129,14 +131,12 @@ int main(int argc, char **argv) {
   size_t threshold = (size_t) strtoul(argv[2], &end, 10);
   if (end != argv[2] + strlen(argv[2])) fprintf(stderr, "threshold value is invalid");
 
-  // TODO: open the file
   int fd = open(filename, O_RDWR);
   if (fd < 0) {
     // file couldn't be opened: handle error and exit
     fprintf(stderr, "file couldn't be opened");
   }
 
-  // TODO: use fstat to determine the size of the file
   struct stat statbuf;
   int rc = fstat(fd, &statbuf);
   if (rc != 0) {
@@ -145,29 +145,22 @@ int main(int argc, char **argv) {
   }
   size_t file_size_in_bytes = statbuf.st_size;
 
-  // TODO: map the file into memory using mmap
   int64_t *data = mmap(NULL, file_size_in_bytes, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-
-  // TODO: call close()
 
   if (data == MAP_FAILED) {
       // handle mmap error and exit
       fprintf(stderr, "mmap error");
   };
 
-  // TODO: sort the data!
   int len = file_size_in_bytes/sizeof(data[0]);
   merge_sort(data, 0, len, threshold);
 
-  // TODO: unmap and close the file
-  *data = munmap(NULL, file_size_in_bytes);
+  munmap(data, file_size_in_bytes);
     
   if (close(fd)!= 0) {
     fprintf(stderr, "close issue");
     exit(1);
   }
 
-
-  // TODO: exit with a 0 exit code if sort was successful
   exit(0);
 }

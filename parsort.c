@@ -50,10 +50,10 @@ void merge(int64_t *arr, size_t begin, size_t mid, size_t end, int64_t *temparr)
 }
 
 int compare_value(const void * a, const void * b) {
-    int f = *((int*)a);
-    int s = *((int*)b);
-    if (f < s) return 1;
-    if (f > s) return -1;
+    int f = *(int64_t*)a;
+    int s = *(int64_t*)b;
+    if (f < s) return -1;
+    if (f > s) return 1;
     return 0;
 }
 

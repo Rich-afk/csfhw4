@@ -11,6 +11,15 @@
 #include <string.h>
 #include <unistd.h>
 
+int is_sorted(int64_t *arr, size_t begin, size_t end) {
+  for (size_t i = begin + 1; i < end; i++) {
+    if (arr[i] < arr[i-1])
+      return 0;
+  }
+  return 1;
+}
+
+
 void merge(int64_t *arr, size_t begin, size_t mid, size_t end, int64_t *temparr) {
 
   // keep left index and right index
@@ -50,8 +59,8 @@ void merge(int64_t *arr, size_t begin, size_t mid, size_t end, int64_t *temparr)
 }
 
 int compare_value(const void * a, const void * b) {
-    int f = *(int64_t*)a;
-    int s = *(int64_t*)b;
+    int64_t f = *(int64_t*)a;
+    int64_t s = *(int64_t*)b;
     if (f < s) return -1;
     if (f > s) return 1;
     return 0;
@@ -68,10 +77,13 @@ void merge_sort(int64_t *arr, size_t begin, size_t end, size_t threshold) {
     // sort the elements sequentially
     // void qsort(void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *));
     qsort(arr + begin, end - begin, sizeof(int64_t), compare_value);
+    if(!(is_sorted(arr, begin, end))) {
+      printf("qsort %lu %lu\n", begin, end);
+    }
   }
   else {
     size_t mid = begin + (end - begin) / 2;
-    int64_t *arrTemp = malloc((end - begin) * sizeof(int64_t));
+    int64_t *arrTemp = malloc((end - begin + 5) * sizeof(int64_t));
     pid_t pidL = fork();
     pid_t pidR = fork();
     if (pidL == -1) {
@@ -86,10 +98,16 @@ void merge_sort(int64_t *arr, size_t begin, size_t end, size_t threshold) {
     }
     if (pidR == 0) {
       merge_sort(arr, mid, end, threshold);
+      if(!(is_sorted(arr, mid, end))) {
+        printf("mid to end merge_sort %lu %lu\n", mid, end);
+      }
       exit(0);
     }
     if (pidL == 0) {
       merge_sort(arr, begin, mid, threshold);
+      if(!(is_sorted(arr, begin, mid))) {
+        printf("begin to mid merge_sort %lu %lu\n", begin, mid);
+      }
       exit(0);
     }
    int wrstatus, wlstatus;

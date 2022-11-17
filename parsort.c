@@ -77,9 +77,9 @@ void merge_sort(int64_t *arr, size_t begin, size_t end, size_t threshold) {
     // sort the elements sequentially
     // void qsort(void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *));
     qsort(arr + begin, end - begin, sizeof(int64_t), compare_value);
-    if(!(is_sorted(arr, begin, end))) {
-      printf("qsort %lu %lu\n", begin, end);
-    }
+    // if(!(is_sorted(arr + begin, end - begin, end))) {
+    //   printf("qsort %lu %lu\n", begin, end - begin);
+    // }
   }
   else {
     size_t mid = begin + (end - begin) / 2;
@@ -98,16 +98,16 @@ void merge_sort(int64_t *arr, size_t begin, size_t end, size_t threshold) {
     }
     if (pidR == 0) {
       merge_sort(arr, mid, end, threshold);
-      if(!(is_sorted(arr, mid, end))) {
-        printf("mid to end merge_sort %lu %lu\n", mid, end);
-      }
+      // if(!(is_sorted(arr, mid, end))) {
+      //   printf("mid to end merge_sort %lu %lu\n", mid, end);
+      // }
       exit(0);
     }
     if (pidL == 0) {
       merge_sort(arr, begin, mid, threshold);
-      if(!(is_sorted(arr, begin, mid))) {
-        printf("begin to mid merge_sort %lu %lu\n", begin, mid);
-      }
+      // if(!(is_sorted(arr, begin, mid))) {
+      //   printf("begin to mid merge_sort %lu %lu\n", begin, mid);
+      // }
       exit(0);
     }
    int wrstatus, wlstatus;

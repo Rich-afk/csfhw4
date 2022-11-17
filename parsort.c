@@ -83,14 +83,18 @@ void merge_sort(int64_t *arr, size_t begin, size_t end, size_t threshold) {
   }
   else {
     size_t mid = begin + (end - begin) / 2;
-    int64_t *arrTemp = malloc((end - begin + 5) * sizeof(int64_t));
+    int64_t *arrTemp = malloc((end - begin) * sizeof(int64_t));
     pid_t pidL = fork();
-    pid_t pidR = fork();
     if (pidL == -1) {
 	    fprintf(stderr, "fork error");
  	    free(arrTemp);
 	    exit(1);
     }
+    if (pidL == 0) {
+      merge_sort(arr, begin, mid, threshold);
+      exit(0);
+    }
+    pid_t pidR = fork();
     if (pidR == -1) {
 	    fprintf(stderr, "fork error");
  	    free(arrTemp);
@@ -98,18 +102,9 @@ void merge_sort(int64_t *arr, size_t begin, size_t end, size_t threshold) {
     }
     if (pidR == 0) {
       merge_sort(arr, mid, end, threshold);
-      // if(!(is_sorted(arr, mid, end))) {
-      //   printf("mid to end merge_sort %lu %lu\n", mid, end);
-      // }
       exit(0);
     }
-    if (pidL == 0) {
-      merge_sort(arr, begin, mid, threshold);
-      // if(!(is_sorted(arr, begin, mid))) {
-      //   printf("begin to mid merge_sort %lu %lu\n", begin, mid);
-      // }
-      exit(0);
-    }
+  
    int wrstatus, wlstatus;
    pid_t r_actual_pid = waitpid(pidR, &wrstatus, 0);
    pid_t l_actual_pid = waitpid(pidL, &wlstatus, 0);
@@ -153,6 +148,7 @@ int main(int argc, char **argv) {
   if (fd < 0) {
     // file couldn't be opened: handle error and exit
     fprintf(stderr, "file couldn't be opened");
+    exit(1);
   }
 
   struct stat statbuf;
@@ -160,6 +156,7 @@ int main(int argc, char **argv) {
   if (rc != 0) {
       // handle fstat error and exit
       fprintf(stderr, "fstat error");
+      exit(1);
   }
   size_t file_size_in_bytes = statbuf.st_size;
 
@@ -168,6 +165,7 @@ int main(int argc, char **argv) {
   if (data == MAP_FAILED) {
       // handle mmap error and exit
       fprintf(stderr, "mmap error");
+      exit(1);
   };
 
   int len = file_size_in_bytes/sizeof(data[0]);

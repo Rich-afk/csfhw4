@@ -141,8 +141,12 @@ int main(int argc, char **argv) {
   // process command line arguments
   const char *filename = argv[1];
   char *end;
+  
   size_t threshold = (size_t) strtoul(argv[2], &end, 10);
-  if (end != argv[2] + strlen(argv[2])) fprintf(stderr, "threshold value is invalid");
+  if (end != argv[2] + strlen(argv[2])) {
+    fprintf(stderr, "threshold value is invalid");
+    exit(1);
+  }
 
   int fd = open(filename, O_RDWR);
   if (fd < 0) {

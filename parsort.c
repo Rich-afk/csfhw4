@@ -11,24 +11,10 @@
 #include <string.h>
 #include <unistd.h>
 
-int is_sorted(int64_t *arr, size_t begin, size_t end) {
-  for (size_t i = begin + 1; i < end; i++) {
-    if (arr[i] < arr[i-1])
-      return 0;
-  }
-  return 1;
-}
-
-
 void merge(int64_t *arr, size_t begin, size_t mid, size_t end, int64_t *temparr) {
-
-  // keep left index and right index
-  // start left index 0 right index mid
-  // terminate when left hits mid or right hits end
-
   int i = begin;
   int j = mid;
-  int x = begin;
+  int x = 0;
   while(i < mid && j < end) {
     if(arr[i] <= arr[j]) {
       temparr[x] = arr[i];
@@ -53,8 +39,10 @@ void merge(int64_t *arr, size_t begin, size_t mid, size_t end, int64_t *temparr)
     x++;
   }
 
+  x = 0;
   for(int i = begin; i < end; i++) {
-    arr[i] = temparr[i];
+    arr[i] = temparr[x];
+    x++;
   }
 }
 
@@ -67,7 +55,6 @@ int compare_value(const void * a, const void * b) {
 }
 
 void merge_sort(int64_t *arr, size_t begin, size_t end, size_t threshold) {
-
   if (end <= begin) {
     fprintf(stderr, "invalid begining and end values");
   }
@@ -75,11 +62,7 @@ void merge_sort(int64_t *arr, size_t begin, size_t end, size_t threshold) {
   // number of elements is at or below the threshold
   if (end - begin <= threshold) {
     // sort the elements sequentially
-    // void qsort(void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *));
     qsort(arr + begin, end - begin, sizeof(int64_t), compare_value);
-    // if(!(is_sorted(arr + begin, end - begin, end))) {
-    //   printf("qsort %lu %lu\n", begin, end - begin);
-    // }
   }
   else {
     size_t mid = begin + (end - begin) / 2;
@@ -141,7 +124,7 @@ int main(int argc, char **argv) {
   // process command line arguments
   const char *filename = argv[1];
   char *end;
-  
+
   size_t threshold = (size_t) strtoul(argv[2], &end, 10);
   if (end != argv[2] + strlen(argv[2])) {
     fprintf(stderr, "threshold value is invalid");

@@ -159,12 +159,16 @@ int main(int argc, char **argv) {
   int len = file_size_in_bytes/sizeof(data[0]);
   merge_sort(data, 0, len, threshold);
 
-  munmap(data, file_size_in_bytes);
+  //munmap(data, file_size_in_bytes);
+  if (munmap(data, file_size_in_bytes) != 0) {
+     fprintf(stderr, "munmap issue");
+     return 1;
+  }
     
   if (close(fd)!= 0) {
     fprintf(stderr, "close issue");
-    exit(1);
+    return 1;
   }
 
-  exit(0);
+  return 0;
 }

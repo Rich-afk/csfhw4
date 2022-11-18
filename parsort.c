@@ -57,6 +57,7 @@ int compare_value(const void * a, const void * b) {
 void merge_sort(int64_t *arr, size_t begin, size_t end, size_t threshold) {
   if (end <= begin) {
     fprintf(stderr, "invalid begining and end values");
+    exit(1);
   }
 
   // number of elements is at or below the threshold
